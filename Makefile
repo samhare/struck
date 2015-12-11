@@ -9,7 +9,7 @@ LDFLAGS =
 BASE_DIR := /opt/local
 
 INCLUDE_DIRS =	-I$(BASE_DIR)/include \
-				-I$(BASE_DIR)/include/eigen2
+				-I$(BASE_DIR)/include/eigen3
 
 LIB_DIRS = -L$(BASE_DIR)/lib
 
