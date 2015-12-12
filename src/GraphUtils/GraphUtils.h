@@ -57,7 +57,7 @@ void showIntGraph(const char *name, const int *arraySrc, int nArrayLength, int d
 void showUCharGraph(const char *name, const uchar *arraySrc, int nArrayLength, int delay_ms DEFAULT(500), IplImage *background DEFAULT(0));
 
 // Simple helper function to easily view an image, with an optional pause.
-void showImage(const IplImage *img, int delay_ms DEFAULT(0), char *name DEFAULT(0));
+void showImage(const IplImage *img, int delay_ms DEFAULT(0), const char *name DEFAULT(0));
 
 // Call 'setGraphColor(0)' to reset the colors that will be used for graphs.
 void setGraphColor(int index DEFAULT(0));

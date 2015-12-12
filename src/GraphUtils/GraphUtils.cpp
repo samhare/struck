@@ -230,7 +230,7 @@ IplImage* drawIntGraph(const int *arraySrc, int nArrayLength, IplImage *imageDst
 		//cvInitFont(&font,CV_FONT_HERSHEY_PLAIN,0.5,0.6, 0,1, CV_AA);	// For OpenCV 2.0
 		CvScalar clr = GREY;
 		char text[16];
-		sprintf_s(text, sizeof(text)-1, "%.1f", maxV);
+		sprintf_s(text, sizeof(text)-1, "%.1f", (float)maxV);
 		cvPutText(imageGraph, text, cvPoint(1, b+4), &font, clr);
 		// Write the scale of the x axis
 		sprintf_s(text, sizeof(text)-1, "%d", (nArrayLength-1) );
@@ -319,7 +319,7 @@ IplImage* drawUCharGraph(const uchar *arraySrc, int nArrayLength, IplImage *imag
 		//cvInitFont(&font,CV_FONT_HERSHEY_PLAIN,0.5,0.6, 0,1, CV_AA);	// For OpenCV 2.0
 		CvScalar clr = GREY;
 		char text[16];
-		sprintf_s(text, sizeof(text)-1, "%.1f", maxV);
+		sprintf_s(text, sizeof(text)-1, "%.1f", (float)maxV);
 		cvPutText(imageGraph, text, cvPoint(1, b+4), &font, clr);
 		// Write the scale of the x axis
 		sprintf_s(text, sizeof(text)-1, "%d", (nArrayLength-1) );
@@ -406,7 +406,7 @@ void showUCharGraph(const char *name, const uchar *arraySrc, int nArrayLength, i
 }
 
 // Simple helper function to easily view an image, with an optional pause.
-void showImage(const IplImage *img, int delay_ms, char *name)
+void showImage(const IplImage *img, int delay_ms, const char *name)
 {
 #ifdef USE_HIGHGUI
 	if (!name)
