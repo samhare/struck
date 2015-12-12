@@ -1,10 +1,13 @@
 # Struck: Structured Output Tracking with Kernels
 
-Code to accompany the paper:
+
+This is a C++ implementation of the tracking algorithm described in the paper:
 
 **Struck: Structured Output Tracking with Kernels**  
 Sam Hare, Amir Saffari, Philip H. S. Torr  
 International Conference on Computer Vision (ICCV), 2011
+
+Tracking can be performed on video sequences, or live input from a webcam.
 
 Copyright (C) 2011 Sam Hare, Oxford Brookes University, Oxford, UK
 
@@ -43,6 +46,9 @@ Please see config.txt for configuration options.
 Sequences are assumed to be of the format of those
 available from: http://vision.ucsd.edu/~bbabenko/project_miltrack.html
 
+## License
+
+This code is released under the GPLv3 license for non-commercial use only. For other types of license please contact me.
 
 ## Acknowledgements
 
