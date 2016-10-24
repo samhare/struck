@@ -1,35 +1,36 @@
-/* 
+/*
  * Struck: Structured Output Tracking with Kernels
- * 
+ *
  * Code to accompany the paper:
  *   Struck: Structured Output Tracking with Kernels
  *   Sam Hare, Amir Saffari, Philip H. S. Torr
  *   International Conference on Computer Vision (ICCV), 2011
- * 
+ *
  * Copyright (C) 2011 Sam Hare, Oxford Brookes University, Oxford, UK
- * 
+ *
  * This file is part of Struck.
- * 
+ *
  * Struck is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Struck is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Struck.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 
 #include "ImageRep.h"
 
 #include <cassert>
 
-#include <opencv/highgui.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
 using namespace cv;
@@ -39,7 +40,7 @@ static const int kNumBins = 16;
 ImageRep::ImageRep(const Mat& image, bool computeIntegral, bool computeIntegralHist, bool colour) :
 	m_channels(colour ? 3 : 1),
 	m_rect(0, 0, image.cols, image.rows)
-{	
+{
 	for (int i = 0; i < m_channels; ++i)
 	{
 		m_images.push_back(Mat(image.rows, image.cols, CV_8UC1));
@@ -52,7 +53,7 @@ ImageRep::ImageRep(const Mat& image, bool computeIntegral, bool computeIntegralH
 			}
 		}
 	}
-		
+
 	if (colour)
 	{
 		assert(image.channels() == 3);
@@ -70,7 +71,7 @@ ImageRep::ImageRep(const Mat& image, bool computeIntegral, bool computeIntegralH
 			image.copyTo(m_images[0]);
 		}
 	}
-	
+
 	if (computeIntegral)
 	{
 		for (int i = 0; i < m_channels; ++i)
@@ -79,7 +80,7 @@ ImageRep::ImageRep(const Mat& image, bool computeIntegral, bool computeIntegralH
 			integral(m_images[i], m_integralImages[i]);
 		}
 	}
-	
+
 	if (computeIntegralHist)
 	{
 		Mat tmp(image.rows, image.cols, CV_8UC1);
@@ -98,8 +99,8 @@ ImageRep::ImageRep(const Mat& image, bool computeIntegral, bool computeIntegralH
 					++dst;
 				}
 			}
-			
-			integral(tmp, m_integralHistImages[j]);			
+
+			integral(tmp, m_integralHistImages[j]);
 		}
 	}
 }

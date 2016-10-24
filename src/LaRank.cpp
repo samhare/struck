@@ -1,28 +1,28 @@
-/* 
+/*
  * Struck: Structured Output Tracking with Kernels
- * 
+ *
  * Code to accompany the paper:
  *   Struck: Structured Output Tracking with Kernels
  *   Sam Hare, Amir Saffari, Philip H. S. Torr
  *   International Conference on Computer Vision (ICCV), 2011
- * 
+ *
  * Copyright (C) 2011 Sam Hare, Oxford Brookes University, Oxford, UK
- * 
+ *
  * This file is part of Struck.
- * 
+ *
  * Struck is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Struck is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Struck.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 
 #include "LaRank.h"
@@ -34,7 +34,10 @@
 #include "Rect.h"
 #include "GraphUtils/GraphUtils.h"
 
-#include <opencv/highgui.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 static const int kTileSize = 30;
 using namespace cv;
 
@@ -116,7 +119,7 @@ void LaRank::Update(const MultiSample& sample, int y)
 
 	ProcessNew((int)m_sps.size()-1);
 	BudgetMaintenance();
-	
+
 	for (int i = 0; i < 10; ++i)
 	{
 		Reprocess();
@@ -170,12 +173,12 @@ void LaRank::SMOStep(int ipos, int ineg)
 
 #if VERBOSE
 	cout << "SMO: gpos:" << svp->g << " gneg:" << svn->g << endl;
-#endif	
+#endif
 	if ((svp->g - svn->g) < 1e-5)
 	{
 #if VERBOSE
 		cout << "SMO: skipping" << endl;
-#endif		
+#endif
 	}
 	else
 	{
@@ -195,11 +198,11 @@ void LaRank::SMOStep(int ipos, int ineg)
 		}
 #if VERBOSE
 		cout << "SMO: " << ipos << "," << ineg << " -- " << svp->b << "," << svn->b << " (" << l << ")" << endl;
-#endif		
+#endif
 	}
-	
+
 	// check if we should remove either sv now
-	
+
 	if (fabs(svp->b) < 1e-8)
 	{
 		RemoveSupportVector(ipos);
@@ -292,7 +295,7 @@ void LaRank::ProcessOld()
 void LaRank::Optimize()
 {
 	if (m_sps.size() == 0) return;
-	
+
 	// choose pattern to optimize
 	int ind = rand() % m_sps.size();
 
@@ -359,11 +362,11 @@ void LaRank::SwapSupportVectors(int ind1, int ind2)
 	SupportVector* tmp = m_svs[ind1];
 	m_svs[ind1] = m_svs[ind2];
 	m_svs[ind2] = tmp;
-	
+
 	VectorXd row1 = m_K.row(ind1);
 	m_K.row(ind1) = m_K.row(ind2);
 	m_K.row(ind2) = row1;
-	
+
 	VectorXd col1 = m_K.col(ind1);
 	m_K.col(ind1) = m_K.col(ind2);
 	m_K.col(ind2) = col1;
@@ -373,7 +376,7 @@ void LaRank::RemoveSupportVector(int ind)
 {
 #if VERBOSE
 	cout << "Removing SV: " << ind << endl;
-#endif	
+#endif
 
 	m_svs[ind]->x->refCount--;
 	if (m_svs[ind]->x->refCount == 0)
@@ -441,7 +444,7 @@ void LaRank::BudgetMaintenanceRemove()
 		// ip and in will have been swapped during support vector removal
 		ip = in;
 	}
-	
+
 	if (m_svs[ip]->b < 1e-8)
 	{
 		// also remove positive sv
@@ -454,7 +457,7 @@ void LaRank::BudgetMaintenanceRemove()
 	{
 		SupportVector& svi = *m_svs[i];
 		svi.g = -Loss(svi.x->yv[svi.y],svi.x->yv[svi.x->y]) - Evaluate(svi.x->x[svi.y], svi.x->yv[svi.y]);
-	}	
+	}
 }
 
 void LaRank::Debug()
@@ -467,21 +470,21 @@ void LaRank::Debug()
 void LaRank::UpdateDebugImage()
 {
 	m_debugImage.setTo(0);
-	
+
 	int n = (int)m_svs.size();
-	
+
 	if (n == 0) return;
-	
+
 	const int kCanvasSize = 600;
 	int gridSize = (int)sqrtf((float)(n-1)) + 1;
 	int tileSize = (int)((float)kCanvasSize/gridSize);
-	
+
 	if (tileSize < 5)
 	{
 		cout << "too many support vectors to display" << endl;
 		return;
 	}
-	
+
 	Mat temp(tileSize, tileSize, CV_8UC1);
 	int x = 0;
 	int y = 0;
@@ -489,17 +492,17 @@ void LaRank::UpdateDebugImage()
 	float vals[kMaxSVs];
 	memset(vals, 0, sizeof(float)*n);
 	int drawOrder[kMaxSVs];
-	
+
 	for (int set = 0; set < 2; ++set)
 	{
 		for (int i = 0; i < n; ++i)
 		{
 			if (((set == 0) ? 1 : -1)*m_svs[i]->b < 0.0) continue;
-			
+
 			drawOrder[ind] = i;
 			vals[ind] = (float)m_svs[i]->b;
 			++ind;
-			
+
 			Mat I = m_debugImage(cv::Rect(x, y, tileSize, tileSize));
 			resize(m_svs[i]->x->images[m_svs[i]->y], temp, temp.size());
 			cvtColor(temp, I, CV_GRAY2RGB);
@@ -513,13 +516,13 @@ void LaRank::UpdateDebugImage()
 			}
 		}
 	}
-	
+
 	const int kKernelPixelSize = 2;
 	int kernelSize = kKernelPixelSize*n;
-	
+
 	double kmin = m_K.minCoeff();
 	double kmax = m_K.maxCoeff();
-	
+
 	if (kernelSize < m_debugImage.cols && kernelSize < m_debugImage.rows)
 	{
 		Mat K = m_debugImage(cv::Rect(m_debugImage.cols-kernelSize, m_debugImage.rows-kernelSize, kernelSize, kernelSize));
@@ -537,8 +540,8 @@ void LaRank::UpdateDebugImage()
 	{
 		kernelSize = 0;
 	}
-	
-	
+
+
 	Mat I = m_debugImage(cv::Rect(0, m_debugImage.rows - 200, m_debugImage.cols-kernelSize, 200));
 	I.setTo(Scalar(255,255,255));
 	IplImage II = I;
