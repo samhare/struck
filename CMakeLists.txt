@@ -19,12 +19,33 @@ include_directories(
     ${OpenCV_INCLUDE_DIRS}
 )
 
-# add all .cpp and .h files in src
-file(GLOB_RECURSE SRC RELATIVE ${PROJECT_SOURCE_DIR} src/*.cpp)
-file(GLOB_RECURSE HEADERS RELATIVE ${PROJECT_SOURCE_DIR} src/*.h)
-
-add_executable(struck ${HEADERS} ${SRC})
-
-target_link_libraries(struck
-    ${OpenCV_LIBS}
+add_library(struck STATIC
+	src/GraphUtils/GraphUtils.cpp
+	src/Config.cpp
+	src/HaarFeature.cpp
+	src/HistogramFeatures.cpp
+	src/LaRank.cpp
+	src/MultiFeatures.cpp
+	src/Sampler.cpp
+	src/Features.cpp
+	src/HaarFeatures.cpp
+	src/ImageRep.cpp
+	src/RawFeatures.cpp
+	src/Tracker.cpp
 )
+
+add_executable(struck_main src/main.cpp)
+
+target_link_libraries(struck_main ${OpenCV_LIBS} struck)
+
+# Try to find TraX header and library ...
+find_file(TRAX_HEADER NAMES trax.h)
+if (EXISTS ${TRAX_HEADER})
+    get_filename_component(TRAX_DIR ${TRAX_HEADER} DIRECTORY)
+    link_directories(${TRAX_DIR}) # Add library directory
+    include_directories(${TRAX_DIR}) # Add includes directory
+
+    add_executable(struck_trax src/trax.cpp)
+    target_link_libraries(struck_trax ${OpenCV_LIBS} struck trax trax_opencv)
+ENDIF()
+
