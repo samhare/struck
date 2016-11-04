@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
 		if (!conf.quietMode)
 		{
 			imshow("result", result);
-			int key = waitKey(paused ? 0 : 1);
+			int key = waitKey(paused ? 0 : 1) % 256; //modulo 256 to retrieve last 8 bits only, known OpenCV bug
 			if (key != -1)
 			{
 				if (key == 27 || key == 113) // esc q
