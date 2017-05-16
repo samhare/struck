@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     cv::Mat image, gray, resized;
 	cv::Rect rectangle;
 
-    trax::Server handle(trax::Configuration(TRAX_IMAGE_PATH | TRAX_IMAGE_MEMORY | TRAX_IMAGE_BUFFER, TRAX_REGION_RECTANGLE), trax_no_log);
+    trax::Server handle(trax::Configuration(TRAX_REGION_RECTANGLE, TRAX_IMAGE_PATH | TRAX_IMAGE_MEMORY | TRAX_IMAGE_BUFFER), trax_no_log);
 
 	Config config;
 

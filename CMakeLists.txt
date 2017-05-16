@@ -39,13 +39,14 @@ add_executable(struck_main src/main.cpp)
 target_link_libraries(struck_main ${OpenCV_LIBS} struck)
 
 # Try to find TraX header and library ...
-find_file(TRAX_HEADER NAMES trax.h)
-if (EXISTS ${TRAX_HEADER})
-    get_filename_component(TRAX_DIR ${TRAX_HEADER} DIRECTORY)
-    link_directories(${TRAX_DIR}) # Add library directory
-    include_directories(${TRAX_DIR}) # Add includes directory
+FIND_PACKAGE(trax COMPONENTS core opencv)
+
+IF (trax_FOUND)
+	LINK_DIRECTORIES(${TRAX_LIBRARY_DIRS})
+	LINK_LIBRARIES(${TRAX_LIBRARIES})
+	INCLUDE_DIRECTORIES(AFTER ${TRAX_INCLUDE_DIRS})
 
     add_executable(struck_trax src/trax.cpp)
-    target_link_libraries(struck_trax ${OpenCV_LIBS} struck trax trax_opencv)
+    target_link_libraries(struck_trax ${OpenCV_LIBS} struck)
 ENDIF()
 
