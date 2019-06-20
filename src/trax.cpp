@@ -29,6 +29,7 @@
 #include "Config.h"
 
 #include <trax/opencv.hpp>
+#include <ctime>
 
 #include <iostream>
 #include <fstream>
@@ -99,12 +100,12 @@ void parseFeatures(string str, std::vector<Config::FeatureKernelPair>& config) {
 
 int main(int argc, char* argv[])
 {
-    trax::Image img;
+    trax::ImageList img;
     trax::Region reg;
     cv::Mat image, gray, resized;
 	cv::Rect rectangle;
 
-    trax::Server handle(trax::Configuration(TRAX_REGION_RECTANGLE, TRAX_IMAGE_PATH | TRAX_IMAGE_MEMORY | TRAX_IMAGE_BUFFER), trax_no_log);
+    trax::Server handle(trax::Configuration(TRAX_REGION_RECTANGLE, TRAX_IMAGE_PATH | TRAX_IMAGE_MEMORY | TRAX_IMAGE_BUFFER, TRAX_CHANNEL_COLOR), trax_no_log);
 
 	Config config;
 
@@ -139,7 +140,7 @@ int main(int argc, char* argv[])
 			string s = prop.get("features", "haar@gaussian@2.0");
 			parseFeatures(s, config.features);
 
-			image = trax::image_to_mat(img);
+			image = trax::image_to_mat(img.get(TRAX_CHANNEL_COLOR));
 
 			if (image.channels() == 3)
 				cv::cvtColor(image, gray, CV_BGR2GRAY);
@@ -164,7 +165,7 @@ int main(int argc, char* argv[])
         // The second one is TRAX_FRAME that tells the tracker what to process next.
         if (tr == TRAX_FRAME) {
 
-            image = trax::image_to_mat(img);
+            image = trax::image_to_mat(img.get(TRAX_CHANNEL_COLOR));
 
 			if (image.channels() == 3)
 				cv::cvtColor(image, gray, CV_BGR2GRAY);

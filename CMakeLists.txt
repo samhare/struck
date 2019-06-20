@@ -47,6 +47,6 @@ IF (trax_FOUND)
 	INCLUDE_DIRECTORIES(AFTER ${TRAX_INCLUDE_DIRS})
 
     add_executable(struck_trax src/trax.cpp)
-    target_link_libraries(struck_trax ${OpenCV_LIBS} struck)
+    target_link_libraries(struck_trax ${OpenCV_LIBS} ${TRAX_LIBRARIES} struck)
 ENDIF()
 
