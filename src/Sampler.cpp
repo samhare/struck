@@ -31,6 +31,10 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#if !defined(M_PI)
+#define M_PI 3.14159265358979323846 
+#endif
+
 using namespace std;
 
 vector<FloatRect> Sampler::RadialSamples(FloatRect centre, int radius, int nr, int nt)
